@@ -36,4 +36,5 @@ run/logs
 run/config
 run/saves
 run/dungeon-map/playerdata
+run/dungeon-map/stats
 run/dungeon-map/session.lock
