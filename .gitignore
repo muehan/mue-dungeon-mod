@@ -30,4 +30,10 @@ bin/
 
 # fabric
 
-run/
+run/eula.txt
+run/players
+run/logs
+run/config
+run/saves
+run/dungeon-map/playerdata
+run/dungeon-map/session.lock
