@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import io.netty.handler.codec.AsciiHeadersEncoder.NewlineType;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -33,22 +34,25 @@ public class ServerPlayConnectionEventListener {
 
                     System.out.println("New Player entered Doungen world: " + handler.player.getName().asString());
 
-                    String uuid = handler.player.getUuidAsString();
-
-                    if (isFirstJoin(uuid)) {
+                    if (isFirstJoin(handler.player)) {
                         givePlayerStartItems(handler.player);
-                        createFile(uuid);
+                        createFile(handler.player);
                     }
                 });
     }
 
     private void createFile(
-            String uuid) {
-        File file = new File(Path + "/" + uuid);
+            ServerPlayerEntity player) {
+        File file = new File(Path + "/" + player.getUuidAsString());
         try {
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
-            bw.write("test");
+            bw.write("position::x=" + player.getX());
+            bw.newLine();
+            bw.write("position::y=" + player.getY());
+            bw.newLine();
+            bw.write("position::z=" + player.getZ());
+            bw.newLine();
             bw.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -58,7 +62,7 @@ public class ServerPlayConnectionEventListener {
 
     private void givePlayerStartItems(
             ServerPlayerEntity player) {
-        
+
         ItemStack woodenSwordStack = new ItemStack(Items.WOODEN_SWORD.asItem());
         player.getInventory().insertStack(woodenSwordStack);
 
@@ -66,9 +70,10 @@ public class ServerPlayConnectionEventListener {
         player.getInventory().insertStack(woodenShieldStack);
     }
 
-    private boolean isFirstJoin(String uuid) {
+    private boolean isFirstJoin(
+            ServerPlayerEntity player) {
 
-        File playerFile = new File(Path + "/" + uuid);
+        File playerFile = new File(Path + "/" + player.getUuidAsString());
 
         if (!playerFile.exists()) {
             return true;
